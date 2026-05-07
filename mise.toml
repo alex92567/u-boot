@@ -1,7 +1,8 @@
 [vars]
-outdir = ".output"
-config = "qcom_defconfig qcom-phone.config tauchgang.config"
-makeprops = "O={{vars.outdir}} CROSS_COMPILE=aarch64-linux-gnu-"
+outdir    = ".output"
+config    = "qcom_defconfig qcom-phone.config tauchgang.config"
+makeprops = "O={{vars.outdir}} CROSS_COMPILE=aarch64-unknown-linux-gnu-"
+DTS       = "sm7325-nothing-spacewar"
 
 [tasks.clean]
 description = "Clean U-Boot"
@@ -13,14 +14,14 @@ run = "make {{vars.makeprops}} -j$(nproc --all) {{vars.config}}"
 
 [tasks.build]
 description = "Make U-Boot"
-run = "make {{vars.makeprops}} -j$(nproc --all) DEVICE_TREE=qcom/{{env.DTS}}"
+run = "make {{vars.makeprops}} -j$(nproc --all) DEVICE_TREE=qcom/{{vars.DTS}}"
 
 [tasks.mkbootimg]
 description = "Make U-Boot bootimg"
 run = '''
-mkbootimg \
+~/mkbootimg/mkbootimg.py \
 	--kernel {{vars.outdir}}/u-boot-nodtb.bin \
-	--dtb {{vars.outdir}}/dts/upstream/src/arm64/qcom/{{env.DTS}}.dtb \
+	--dtb {{vars.outdir}}/dts/upstream/src/arm64/qcom/{{vars.DTS}}.dtb \
 	--base 0x0 \
 	--kernel_offset 0x8000 \
 	--ramdisk_offset 0x1000000 \
